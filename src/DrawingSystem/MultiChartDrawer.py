@@ -9,6 +9,7 @@ class MultiChartDrawer(DrawingSystem):
     def add_new_chart(self, 
                       x : ndarray, 
                       y : ndarray, 
+                      label : str,
                       color : str = 'Next'):
         pass
     # end def

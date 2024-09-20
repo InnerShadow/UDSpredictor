@@ -20,8 +20,9 @@ class DataLoader(ABC):
         raise NotImplementedError()
     # end def
 
+    @abstractmethod
     def _load_data(self):
-        pass
+        raise NotImplementedError()
     # end def
 
     def __len__(self) -> int:

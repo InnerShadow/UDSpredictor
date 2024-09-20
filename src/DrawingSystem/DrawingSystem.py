@@ -17,8 +17,4 @@ class DrawingSystem(ABC):
     def plot(self) -> None:
         raise NotImplementedError()
     # end def
-
-    def parce_images(self, *args) -> None:
-        pass
-    # end def
 # end class
