@@ -7,8 +7,9 @@ from abc import ABC, abstractmethod
 class DataLoader(ABC):
     def __init__(self,
                  do_scale : bool = False) -> None:
-        self.df = None
+        self.df : DataFrame = None
         self._preprocess_data_frame()
+        self._load_data()
         if do_scale:
             self._do_scale()
         # end if
