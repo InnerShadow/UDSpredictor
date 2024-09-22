@@ -17,17 +17,12 @@ class ModelWrapper(object):
         # end match
     # end def
 
-    def fit(self, X : Optional[ndarray], 
-              y : Optional[ndarray],
-              **kwargs
-              ) -> None:
-        return self.model.fit(X = X, y = y, **kwargs)
+    def fit(self, **kwargs) -> None:
+        return self.model.fit(**kwargs)
     # end def
 
-    def score(self, X : Optional[ndarray], 
-              y : Optional[ndarray],
-              ) -> float:
-        return self.model.score(X = X, y = y)
+    def score(self, **kwargs) -> float:
+        return self.model.score(**kwargs)
     # end def
 
     def predict(self, X : Optional[ndarray]) -> Optional[list]:

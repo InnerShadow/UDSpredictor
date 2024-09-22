@@ -1,9 +1,8 @@
-
 from typing import Callable
-
 import torch
 from torch import Tensor
 from torch.nn import MSELoss
+from torch.utils.data import DataLoader, TensorDataset
 
 from Models.BaseModel import BaseModel
 from Models.LSTMModel import LSTMModel
@@ -25,6 +24,7 @@ class TorchModel(BaseModel):
                  use_batch_norm : bool = False,
                  dropout_rate : float = 0.0
                  ) -> None:
+        
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.output_size = output_size
@@ -63,27 +63,36 @@ class TorchModel(BaseModel):
             y : Tensor,
             epochs : int = 10,
             lr : float = 0.001,
+            batch_size : int = 32,
             verbose : bool = False
             ) -> None:
         
-        optimizer = OPTIMAZER_MAP[self.optimazer.lower()](self.model.parameters(), lr = lr)
+        dataset = TensorDataset(X, y)
+        dataloader = DataLoader(dataset, batch_size = batch_size, shuffle = True)
+
+        optimizer = OPTIMAZER_MAP[self.optimazer.lower()](self.model.parameters(), lr=lr)
 
         for epoch in range(epochs):
             self.model.train()
-            
-            optimizer.zero_grad()
-            outputs: Tensor = self.model(X)
-            loss: Tensor = TorchModel.loss_func(outputs, y)
-            loss.backward()
-            optimizer.step()
+            running_loss = 0.0
+
+            for X_batch, y_batch in dataloader:
+                optimizer.zero_grad()
+                outputs : Tensor = self.model(X_batch)
+                loss : Tensor = TorchModel.loss_func(outputs, y_batch)
+                loss.backward()
+                optimizer.step()
+                running_loss += loss.item()
+            # end for
 
             if epoch % 100 == 0 and verbose:
-                print(f'Epoch [{epoch+1}/{epochs}], Loss: {loss.item()}')
+                avg_loss = running_loss / len(dataloader)
+                print(f'Epoch [{epoch+1}/{epochs}], Loss: {avg_loss}')
             # end if
         # end for
     # end def
 
-    def score(self, X: Tensor, y: Tensor) -> float:
+    def score(self, X : Tensor, y : Tensor) -> float:
         self.model.eval()
         with torch.no_grad():
             outputs: Tensor = self.model(X)
@@ -92,7 +101,7 @@ class TorchModel(BaseModel):
         return mse
     # end def
 
-    def predict(self, X: Tensor) -> Tensor:
+    def predict(self, X : Tensor) -> Tensor:
         self.model.eval()
         with torch.no_grad():
             outputs: Tensor = self.model(X)
