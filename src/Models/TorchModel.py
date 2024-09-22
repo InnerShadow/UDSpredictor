@@ -21,7 +21,9 @@ class TorchModel(BaseModel):
                  rnn_type : str,
                  optimazer : str,
                  input_size : int = 1,
-                 output_size : int = 1
+                 output_size : int = 1,
+                 use_batch_norm : bool = False,
+                 dropout_rate : float = 0.0
                  ) -> None:
         self.input_size = input_size
         self.hidden_size = hidden_size
@@ -30,25 +32,27 @@ class TorchModel(BaseModel):
         self.seq_len = seq_len
         self.rnn_type = rnn_type
         self.optimazer = optimazer
+        self.use_batch_norm = use_batch_norm
+        self.dropout_rate = dropout_rate
         
         self.model = self._create_model()
     # end def
         
     def _create_model(self):
 
+        args = {
+            'input_size' : self.input_size,
+            'hidden_size' : self.hidden_size,
+            'output_size' : self.output_size,
+            'num_layers' : self.num_layers,
+            'seq_len' : self.seq_len,
+            'use_batch_norm' : self.use_batch_norm,
+            'dropout_rate' : self.dropout_rate
+        }
+
         model_map = {
-            'lstm' : LSTMModel(input_size = self.input_size, 
-                        hidden_size = self.hidden_size, 
-                        output_size = self.output_size, 
-                        num_layers = self.num_layers, 
-                        seq_len = self.seq_len
-                        ).to('cpu'),
-            'gru' : GRUModel(input_size = self.input_size, 
-                        hidden_size = self.hidden_size, 
-                        output_size = self.output_size, 
-                        num_layers = self.num_layers, 
-                        seq_len = self.seq_len
-                        ).to('cpu'),
+            'lstm' : LSTMModel(**args).to('cpu'),
+            'gru' : GRUModel(**args).to('cpu'),
         }
 
         return model_map[self.rnn_type.lower()]
