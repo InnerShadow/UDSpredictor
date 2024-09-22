@@ -62,22 +62,33 @@ class TorchModel(BaseModel):
     def fit(self, 
             X : Tensor,
             y : Tensor,
+            X_val : Tensor = None,
+            y_val : Tensor = None,
             epochs : int = 10,
             lr : float = 0.001,
             batch_size : int = 32,
+            patience_early_stopping : int = 16,
+            patience_lr_reduce : int = 7,
+            lr_reduce_factor : float = 0.1,
+            minmun_lr : float = 10e-7,
             verbose : bool = False
             ) -> None:
         
-        dataset = TensorDataset(X, y)
-        dataloader = DataLoader(dataset, batch_size = batch_size, shuffle = True)
+        dataset_train = TensorDataset(X, y)
+        dataloader_train = DataLoader(dataset_train, batch_size = batch_size, shuffle = True)
 
-        optimizer = OPTIMAZER_MAP[self.optimazer.lower()](self.model.parameters(), lr=lr)
+        optimizer = OPTIMAZER_MAP[self.optimazer.lower()](self.model.parameters(), lr = lr)
+
+        best_loss = float('inf')
+        epochs_no_improve = 0
+        epochs_no_improve_lr = 0
+        best_model_state = None
 
         for epoch in range(epochs):
             self.model.train()
             running_loss = 0.0
 
-            for X_batch, y_batch in dataloader:
+            for X_batch, y_batch in dataloader_train:
                 optimizer.zero_grad()
                 outputs : Tensor = self.model(X_batch)
                 loss : Tensor = TorchModel.loss_func(outputs, y_batch)
@@ -86,11 +97,52 @@ class TorchModel(BaseModel):
                 running_loss += loss.item()
             # end for
 
-            if epoch % 100 == 0 and verbose:
-                avg_loss = running_loss / len(dataloader)
-                print(f'Epoch [{epoch+1}/{epochs}], Loss: {avg_loss}')
+            avg_loss = running_loss / len(dataloader_train)
+
+            if X_val is not None and y_val is not None:
+                val_loss = self.score(X_val, y_val)
+            else:
+                val_loss = avg_loss
+            # end if
+
+            if verbose:
+                print(f'Epoch [{epoch+1}/{epochs}], Loss: {avg_loss}, Val Loss: {val_loss}')
+            # end if
+
+            if val_loss < best_loss:
+                best_loss = val_loss
+                epochs_no_improve = 0
+                epochs_no_improve_lr = 0
+                best_model_state = self.model.state_dict()
+            else:
+                epochs_no_improve += 1
+                epochs_no_improve_lr += 1
+            # end def
+
+            # Early stopping
+            if epochs_no_improve >= patience_early_stopping:
+                if verbose:
+                    print(f"Early stopping at epoch {epoch+1}. Best val_loss: {best_loss}")
+                # end if
+                break
+            # end if
+
+            # Reduce learning rate
+            if epochs_no_improve_lr >= patience_lr_reduce:
+                for param_group in optimizer.param_groups:
+                    param_group['lr'] = max(param_group['lr'] * lr_reduce_factor, minmun_lr)
+                # end for
+                epochs_no_improve_lr = 0
+                if verbose:
+                    print(f"Reduced learning rate to {param_group['lr']}")
+                # end if
             # end if
         # end for
+
+        # Load the best model state (from early stopping)
+        if best_model_state is not None:
+            self.model.load_state_dict(best_model_state)
+        # end if
     # end def
 
     def score(self, X : Tensor, y : Tensor) -> float:
