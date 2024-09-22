@@ -1,7 +1,8 @@
 from typing import Callable
 import torch
 from torch import Tensor
-from torch.nn import MSELoss
+from torch.nn import MSELoss, Module
+from torch import optim
 from torch.utils.data import DataLoader, TensorDataset
 
 from Models.BaseModel import BaseModel
@@ -35,7 +36,7 @@ class TorchModel(BaseModel):
         self.use_batch_norm = use_batch_norm
         self.dropout_rate = dropout_rate
         
-        self.model = self._create_model()
+        self.model : Module = self._create_model()
     # end def
         
     def _create_model(self):

@@ -4,9 +4,13 @@ from numpy import ndarray
 from typing import Optional
 
 from Models.TorchModel import TorchModel
+from Models.BaseModel import BaseModel
 
 class ModelWrapper(object):
     def __init__(self, type : str, **kwargs):
+
+        self.model : BaseModel = None
+
         match type.lower():
             case 'lstm':
                 self.model = TorchModel(**kwargs, rnn_type = 'lstm')

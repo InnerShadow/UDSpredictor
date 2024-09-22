@@ -35,7 +35,7 @@ class GRUModel(Module):
         self.fc = Linear(hidden_size, output_size)
     # end def
     
-    def forward(self, x: Tensor) -> Tensor:
+    def forward(self, x : Tensor) -> Tensor:
         h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(x.device)
 
         out, _ = self.gru(x, h0)
