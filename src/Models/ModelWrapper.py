@@ -14,7 +14,7 @@ class ModelWrapper(object):
         match type.lower():
             case 'lstm':
                 self.model = TorchModel(**kwargs, rnn_type = 'lstm')
-            # enc case
+            # end case
             case 'gru':
                 self.model = TorchModel(**kwargs, rnn_type = 'lstm')
             # end case
