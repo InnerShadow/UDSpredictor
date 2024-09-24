@@ -4,6 +4,8 @@ from torch import optim
 
 BASE_OUTPUT_PATH = os.path.join('Data', 'Output')
 
+USD_COLUMN_VALUE = 'Unnamed: 58'
+
 XLS_FILES = (
     os.path.join('Data', '2018_day_ru.xls'),
     os.path.join('Data', '2019_day_ru.xls'),
