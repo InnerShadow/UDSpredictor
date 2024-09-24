@@ -2,20 +2,21 @@ import os
 import pandas as pd
 
 from pandas import DataFrame
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 from Config.config import XLS_FILES
 
 from Config.config import USD_COLUMN_VALUE
 
 class DataLoader():
-    def __init__(self, do_scale: bool = False) -> None:
+    def __init__(self, do_scale : str) -> None:
         self.df: DataFrame = None
         self._load_data() 
         self._preprocess_data_frame()  
-        if do_scale:
-            self._do_scale() 
-        # end if
+
+
+        # TODO: Обработать 2 типа скейлов по значению do_scale, которые может принимать занчения "min" и "std"
+       
     # end def
 
     def get_time_prediod(self, perido : str) -> DataFrame:
@@ -47,8 +48,13 @@ class DataLoader():
         return self.df.iloc[index]['Cost']
     # end def
 
-    def _do_scale(self) -> None:
+    def _do_min_max_scale(self) -> None:
         scaler = MinMaxScaler()
+        self.df['Cost'] = scaler.fit_transform(self.df[['Cost']])
+    # end def
+
+    def _do_standart_scale(self) -> None:
+        scaler = StandardScaler()
         self.df['Cost'] = scaler.fit_transform(self.df[['Cost']])
     # end def
     
