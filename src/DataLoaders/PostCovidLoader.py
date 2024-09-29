@@ -1,9 +1,11 @@
 
-from Containers.DataLoader import DataLoader
+from datetime import datetime
+
+from DataLoaders.DataLoader import DataLoader
 
 from Config.config import XLS_FILES
 
-class PostCovidLoader(XLSDataLoader):
+class PostCovidLoader(DataLoader):
     def __init__(self, file_path: str, do_scale: bool = False) -> None:
         super().__init__(file_path, do_scale)
     

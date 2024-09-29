@@ -16,11 +16,6 @@ class DataLoader(ABC):
     # end def
 
     @abstractmethod
-    def _load_data(self) -> None:                     
-        raise NotImplementedError()
-    # end def
-
-    @abstractmethod
     def _preprocess_data_frame(self) -> None:         
         raise NotImplementedError()
     # end def
@@ -67,7 +62,7 @@ def load_multiple_years(file_pattern: str, start_year: int, end_year: int, do_sc
         file_path = file_pattern.format(year)  # Формируем имя файла, подставляя год
         print(f"Загрузка данных из файла: {file_path}")
         
-        loader = XLSDataLoader(file_path, do_scale)  # Создаём экземпляр загрузчика данных
+        loader = DataLoader(file_path, do_scale)  # Создаём экземпляр загрузчика данных
         combined_df = pd.concat([combined_df, loader.df], ignore_index=True)  # Объединяем данные
     # end for
     
@@ -75,14 +70,15 @@ def load_multiple_years(file_pattern: str, start_year: int, end_year: int, do_sc
 # end def
 
 ## Пример использования:
-#file_pattern = "{}_day_ru.xls"  # Шаблон названия файлов
-#start_year = 2018
-#end_year = 2024
+file_pattern = "/home/masikol/main/USDpredictor/src/Data/2018_day_ru.xls"  # Шаблон названия файлов
 
-## Загрузка и объединение данных за все годы
-#full_dataset = load_multiple_years(file_pattern, start_year, end_year, do_scale=True)
+start_year = 2018
+end_year = 2024
 
-## Теперь full_dataset содержит объединённые данные из всех файлов
-#print(full_dataset.head())
+# Загрузка и объединение данных за все годы
+full_dataset = load_multiple_years(file_pattern, start_year, end_year, do_scale=False)
+
+# Теперь full_dataset содержит объединённые данные из всех файлов
+print(full_dataset.head())
 
 
