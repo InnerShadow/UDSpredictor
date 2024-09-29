@@ -40,19 +40,47 @@ class DataLoader(ABC):
     
 # end class
 
-# Реализация конкретного загрузчика данных
-def _preprocess_data_frame(self) -> None:                              #Предобработка данных: выбор колонок с датой и курсом USD.
-                                                                       # Ищем столбцы с датой и курсом доллара США
-        usd_column_name = 'Доллар США (USD)'
-        if 'Дата' not in self.df.columns or usd_column_name not in self.df.columns:
-            raise ValueError("Датасет должен содержать колонки 'Дата' и 'Доллар США (USD)'.")
-        
-                                                                            # Выбираем только колонки с датой и курсом USD
-        self.df = self.df[['Дата', usd_column_name]]
-        self.df.columns = ['Date', 'Cost']                                            # Переименовываем для единообразия
-        
-                                                                                # Преобразуем 'Date' в datetime формат, если это не так
-        if not pd.api.types.is_datetime64_any_dtype(self.df['Date']):
-            self.df['Date'] = pd.to_datetime(self.df['Date'], errors='coerce')
+
+class XLSDataLoader(DataLoader):
+    def _load_data(self) -> None:
+        # Загрузка данных из XLS файла, пропуская первые 5 строк
+        self.df = pd.read_excel(self.file_path, header=None, skiprows=5)
+    # end def
+
+    def _preprocess_data_frame(self) -> None:
+        # Извлечение данных для Date из 1-й колонки (индекс 0) и Cost из 51-й колонки (индекс 50)
+        self.df = self.df[[0, 50]]  # Колонки: 0 для Date и 50 для Cost
+        self.df.columns = ['Date', 'Cost']  # Переименовываем колонки
+        self.df.dropna(inplace=True)  # Удаляем строки с отсутствующими значениями
+        self.df['Date'] = pd.to_datetime(self.df['Date'], errors='coerce')  # Преобразуем даты в формат datetime
+        self.df.dropna(subset=['Date'], inplace=True)  # Удаляем строки с некорректными датами
     # end def
 # end class
+
+# Функция для объединения данных из нескольких файлов
+def load_multiple_years(file_pattern: str, start_year: int, end_year: int, do_scale: bool = False) -> pd.DataFrame:
+    combined_df = pd.DataFrame()  # Пустой DataFrame для хранения объединённых данных
+    
+    for year in range(start_year, end_year + 1):
+        file_path = file_pattern.format(year)  # Формируем имя файла, подставляя год
+        print(f"Загрузка данных из файла: {file_path}")
+        
+        loader = XLSDataLoader(file_path, do_scale)  # Создаём экземпляр загрузчика данных
+        combined_df = pd.concat([combined_df, loader.df], ignore_index=True)  # Объединяем данные
+    # end for
+    
+    return combined_df
+# end def
+
+## Пример использования:
+#file_pattern = "{}_day_ru.xls"  # Шаблон названия файлов
+#start_year = 2018
+#end_year = 2024
+
+## Загрузка и объединение данных за все годы
+#full_dataset = load_multiple_years(file_pattern, start_year, end_year, do_scale=True)
+
+## Теперь full_dataset содержит объединённые данные из всех файлов
+#print(full_dataset.head())
+
+
