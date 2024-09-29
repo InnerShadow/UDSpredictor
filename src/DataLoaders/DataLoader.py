@@ -1,43 +1,28 @@
 import os
 import pandas as pd
-#hui
+#hui2
 from pandas import DataFrame
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
+from sklearn.preprocessing import MinMaxScaler
+from abc import ABC, abstractmethod
 
-from Config.config import XLS_FILES
-
-from Config.config import USD_COLUMN_VALUE
-
-class DataLoader():
-    def __init__(self, do_scale : str) -> None:
+class DataLoader(ABC):
+    def __init__(self, file_path: str, do_scale: bool = False) -> None:
+        self.file_path = file_path
         self.df: DataFrame = None
         self._load_data() 
         self._preprocess_data_frame()  
-
-
-        # TODO: Обработать 2 типа скейлов по значению do_scale, которые может принимать занчения "min" и "std"
-       
+        if do_scale:
+            self._do_scale() 
     # end def
 
-    def get_time_prediod(self, perido : str) -> DataFrame:
-        if perido == 'pre':
-            self._get_data_pre_coiv()
-        elif perido == 'post':
-            pass
-        else:
-            raise ValueError('Bad period.')
-        # end if
-    # end def
-
-    def _get_data_pre_coiv(self) -> DataFrame:
-        pass
-
+    @abstractmethod
     def _load_data(self) -> None:                     
-        pass
+        raise NotImplementedError()
     # end def
 
+    @abstractmethod
     def _preprocess_data_frame(self) -> None:         
-        pass
+        raise NotImplementedError()
     # end def
 
     def __len__(self) -> int:
@@ -48,11 +33,30 @@ class DataLoader():
         return self.df.iloc[index]['Cost']
     # end def
 
-    def _do_min_max_scale(self) -> None:
+    def _do_scale(self) -> None:
         scaler = MinMaxScaler()
         self.df['Cost'] = scaler.fit_transform(self.df[['Cost']])
     # end def
+
+    def _load_data(self) -> None:
+        # Загрузка данных из XLS файла, пропуская первые 5 строк
+        self.df = pd.read_excel(self.file_path, header=None, skiprows=5)
+    # end def
+
+    def _preprocess_data_frame(self) -> None:
+        # Извлечение данных для Date из 1-й колонки (индекс 0) и Cost из 51-й колонки (индекс 50)
+        self.df = self.df[[0, 50]]  # Колонки: 0 для Date и 50 для Cost
+        self.df.columns = ['Date', 'Cost']  # Переименовываем колонки
+        self.df.dropna(inplace=True)  # Удаляем строки с отсутствующими значениями
+        self.df['Date'] = pd.to_datetime(self.df['Date'], errors='coerce')  # Преобразуем даты в формат datetime
+        self.df.dropna(subset=['Date'], inplace=True)  # Удаляем строки с некорректными датами
+    # end def
     
+# end class
+
+
+class XLSDataLoader(DataLoader):
+    pass
 # end class
 
 # Функция для объединения данных из нескольких файлов
