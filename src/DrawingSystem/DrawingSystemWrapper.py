@@ -3,6 +3,7 @@ from DrawingSystem.MultiChartDrawer import MultiChartDrawer
 from DrawingSystem.ForecastDrawer import ForecastDrawer
 from DrawingSystem.CombineDrawer import CombineDrawer
 from DrawingSystem.ResidueDrawer import ResidueDrawer
+from DrawingSystem.AutocorrelationDrawer import AutoccorelationDrawer
 
 class DrawingSystemWrapper(object):
     def __init__(self, mode : str) -> None:
@@ -14,6 +15,8 @@ class DrawingSystemWrapper(object):
             self.drawer = CombineDrawer()
         elif mode == 'residue':
             self.drawer = ResidueDrawer()
+        elif mode == 'autocorrelation':
+            self.drawer = AutocorrelationDrawer()
         else:
             raise ValueError('Bad mode')
         # end if
