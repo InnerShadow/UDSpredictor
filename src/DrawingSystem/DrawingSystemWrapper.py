@@ -3,7 +3,7 @@ from DrawingSystem.MultiChartDrawer import MultiChartDrawer
 from DrawingSystem.ForecastDrawer import ForecastDrawer
 from DrawingSystem.CombineDrawer import CombineDrawer
 from DrawingSystem.ResidueDrawer import ResidueDrawer
-from DrawingSystem.AutocorrelationDrawer import AutoccorelationDrawer
+from DrawingSystem.AutocorrelationDrawer import AutocorrelationDrawer
 
 class DrawingSystemWrapper(object):
     def __init__(self, mode : str) -> None:
