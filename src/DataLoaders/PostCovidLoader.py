@@ -10,7 +10,7 @@ class PostCovidLoader(XLSDataLoader):
     def _preprocess_data_frame(self) -> None:
         super()._preprocess_data_frame()  # Предобработка базовых данных
         covid_end = datetime(2021, 6, 1)  # Примерный конец активной фазы пандемии COVID
-        exponential_start = datetime(2014, 12, 1)  # Примерный период экспоненциального роста рубля
+        exponential_end = datetime(2022, 5, 6)  # Примерный период экспоненциального роста рубля
         
         # Фильтруем данные после окончания активной фазы COVID и исключаем период экспоненциального роста
         self.df = self.df[(self.df['Date'] > covid_end) & (self.df['Date'] < exponential_start)]

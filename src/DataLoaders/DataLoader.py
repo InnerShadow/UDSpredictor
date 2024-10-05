@@ -55,19 +55,15 @@ class DataLoader(ABC):
 # end class
 
 
-class XLSDataLoader(DataLoader):
-    pass
-# end class
-
 # Функция для объединения данных из нескольких файлов
 def load_multiple_years(file_pattern: str, start_year: int, end_year: int, do_scale: bool = False) -> pd.DataFrame:
     combined_df = pd.DataFrame()  # Пустой DataFrame для хранения объединённых данных
     
     for year in range(start_year, end_year + 1):
         file_path = file_pattern.format(year)  # Формируем имя файла, подставляя год
-        print(f"Загрузка данных из файла: {file_path}")
+        #print(f"Загрузка данных из файла: {file_path}")
         
-        loader = XLSDataLoader(file_path, do_scale)  # Создаём экземпляр загрузчика данных
+        loader = DataLoader(file_path, do_scale)  # Создаём экземпляр загрузчика данных
         combined_df = pd.concat([combined_df, loader.df], ignore_index=True)  # Объединяем данные
     # end for
     
@@ -80,9 +76,12 @@ def load_multiple_years(file_pattern: str, start_year: int, end_year: int, do_sc
 #end_year = 2024
 
 ## Загрузка и объединение данных за все годы
-#full_dataset = load_multiple_years(file_pattern, start_year, end_year, do_scale=True)
+#full_dataset = load_multiple_years(file_pattern, start_year, end_year, do_scale=False)
 
 ## Теперь full_dataset содержит объединённые данные из всех файлов
 #print(full_dataset.head())
+
+
+
 
 
