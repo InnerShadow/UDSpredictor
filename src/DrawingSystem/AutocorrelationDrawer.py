@@ -16,7 +16,7 @@ import os
 
 # from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 
-class AutoccorelationDrawer(DrawingSystem):
+class AutocorrelationDrawer(DrawingSystem):
 
     def __init__(self) -> None:
         super.__init__()
