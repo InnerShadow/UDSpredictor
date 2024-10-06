@@ -2,8 +2,9 @@
 from DataLoaders.DataLoader import DataLoader
 
 from Config.config import XLS_FILES
+from datetime import datetime
 
-class PreCovidLoader(XLSDataLoader):
+class PreCovidLoader(DataLoader):
     def __init__(self, file_path: str, do_scale: bool = False) -> None:
         super().__init__(file_path, do_scale)
     

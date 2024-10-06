@@ -1,9 +1,11 @@
 
-from Containers.DataLoader import DataLoader
+from DataLoaders.DataLoader import DataLoader
 
 from Config.config import XLS_FILES
+from datetime import datetime
 
-class PostCovidLoader(XLSDataLoader):
+
+class PostCovidLoader(DataLoader):
     def __init__(self, file_path: str, do_scale: bool = False) -> None:
         super().__init__(file_path, do_scale)
     
@@ -13,6 +15,6 @@ class PostCovidLoader(XLSDataLoader):
         exponential_end = datetime(2022, 5, 6)  # Примерный период экспоненциального роста рубля
         
         # Фильтруем данные после окончания активной фазы COVID и исключаем период экспоненциального роста
-        self.df = self.df[(self.df['Date'] > covid_end) & (self.df['Date'] < exponential_start)]
+        self.df = self.df[(self.df['Date'] > covid_end) & (self.df['Date'] > exponential_end)]
     # end def
 # end class
