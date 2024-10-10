@@ -6,24 +6,15 @@ from sklearn.preprocessing import MinMaxScaler
 from abc import ABC, abstractmethod
 from datetime import datetime
 
+from Config.config import XLS_FILES
+
 class DataLoader(ABC):
-    def __init__(self, file_path: str, do_scale: bool = False) -> None:
-        self.file_path = file_path
+    def __init__(self, do_scale: bool = False) -> None:
         self.df: DataFrame = None
         self._load_data() 
         self._preprocess_data_frame()  
         if do_scale:
             self._do_scale() 
-    # end def
-
-    @abstractmethod
-    def _load_data(self) -> None:                     
-        raise NotImplementedError()
-    # end def
-
-    @abstractmethod
-    def _preprocess_data_frame(self) -> None:         
-        raise NotImplementedError()
     # end def
 
     def __len__(self) -> int:
@@ -40,8 +31,16 @@ class DataLoader(ABC):
     # end def
 
     def _load_data(self) -> None:
-        # Загрузка данных из XLS файла, пропуская первые 5 строк
-        self.df = pd.read_excel(self.file_path, header=None, skiprows=5)
+        combined_df = pd.DataFrame()  # Пустой DataFrame для хранения объединённых данных
+        
+        for file_path in XLS_FILES:
+            # Загружаем данные из каждого файла Excel, пропуская первые 5 строк
+            df = pd.read_excel(file_path, header=None, skiprows=5)
+            # Объединяем данные в общий DataFrame
+            combined_df = pd.concat([combined_df, df], ignore_index=True)
+        # end for
+        
+        self.df = combined_df  # Сохраняем объединённый DataFrame как атрибут класса
     # end def
 
     def _preprocess_data_frame(self) -> None:
@@ -55,34 +54,13 @@ class DataLoader(ABC):
     
 # end class
 
-
-# Функция для объединения данных из нескольких файлов
-def load_multiple_years(file_pattern: str, start_year: int, end_year: int, do_scale: bool = False) -> pd.DataFrame:
-    combined_df = pd.DataFrame()  # Пустой DataFrame для хранения объединённых данных
-    
-    for year in range(start_year, end_year + 1):
-        file_path = file_pattern.format(year)  # Формируем имя файла, подставляя год
-        #print(f"Загрузка данных из файла: {file_path}")
-        
-        loader = DataLoader(file_path, do_scale)  # Создаём экземпляр загрузчика данных
-        combined_df = pd.concat([combined_df, loader.df], ignore_index=True)  # Объединяем данные
-    # end for
-    
-    return combined_df
-# end def
-
 ## Пример использования:
-#file_pattern = "{}_day_ru.xls"  # Шаблон названия файлов
-#start_year = 2018
-#end_year = 2024
+# file_pattern = "{}_day_ru.xls"  # Шаблон названия файлов
+# start_year = 2018
+# end_year = 2024
 
-## Загрузка и объединение данных за все годы
-#full_dataset = load_multiple_years(file_pattern, start_year, end_year, do_scale=False)
+## Загрузка и объединение данных за все годы через класс DataLoader
+# full_dataset = DataLoader(do_scale=False)
 
-## Теперь full_dataset содержит объединённые данные из всех файлов
-#print(full_dataset.head())
-
-
-
-
-
+## Теперь full_dataset.df содержит объединённые данные из всех файлов
+# print(full_dataset.df.head())

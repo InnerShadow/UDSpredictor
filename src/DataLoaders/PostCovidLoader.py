@@ -6,8 +6,8 @@ from datetime import datetime
 
 
 class PostCovidLoader(DataLoader):
-    def __init__(self, file_path: str, do_scale: bool = False) -> None:
-        super().__init__(file_path, do_scale)
+    def __init__(self, do_scale: bool = False) -> None:
+        super().__init__(do_scale)
     
     def _preprocess_data_frame(self) -> None:
         super()._preprocess_data_frame()  # Предобработка базовых данных
