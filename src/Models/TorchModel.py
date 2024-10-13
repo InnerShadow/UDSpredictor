@@ -1,3 +1,6 @@
+import csv
+import os
+
 from typing import Callable
 import torch
 from torch import Tensor
@@ -23,7 +26,8 @@ class TorchModel(BaseModel):
                  input_size : int = 1,
                  output_size : int = 1,
                  use_batch_norm : bool = False,
-                 dropout_rate : float = 0.0
+                 dropout_rate : float = 0.0,
+                 log_path: str = 'Outputs/data.csv'
                  ) -> None:
         
         self.input_size = input_size
@@ -35,8 +39,25 @@ class TorchModel(BaseModel):
         self.optimazer = optimazer
         self.use_batch_norm = use_batch_norm
         self.dropout_rate = dropout_rate
+        self.log_path = log_path
+
+        os.makedirs(os.path.dirname(self.log_path), exist_ok = True)
+        self.first_epoch: bool = True
         
         self.model : Module = self._create_model()
+    # end def
+
+    def _log_to_csv(self, epoch: int, train_loss: float, val_loss: float) -> None:
+        mode = 'w' if self.first_epoch else 'a'
+        with open(self.log_path, mode, newline = '') as file:
+            writer = csv.writer(file)
+            if self.first_epoch:
+                writer.writerow(['Epoch', 'Train Loss', 'Val Loss'])
+                self.first_epoch = False
+
+            val_loss_value = val_loss.item() if isinstance(val_loss, torch.Tensor) else val_loss
+            writer.writerow([epoch, train_loss, val_loss_value])
+        # end with
     # end def
         
     def _create_model(self):
@@ -97,6 +118,8 @@ class TorchModel(BaseModel):
                 running_loss += loss.item()
             # end for
 
+            avg_train_loss = running_loss / len(dataloader_train)
+
             avg_loss = running_loss / len(dataloader_train)
 
             if X_val is not None and y_val is not None:
@@ -109,6 +132,8 @@ class TorchModel(BaseModel):
             if verbose:
                 print(f'Epoch [{epoch+1}/{epochs}], Loss: {avg_loss}, Val Loss: {val_loss}')
             # end if
+
+            self._log_to_csv(epoch + 1, avg_train_loss, val_loss)
 
             if val_loss < best_loss:
                 best_loss = val_loss
