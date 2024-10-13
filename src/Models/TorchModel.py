@@ -100,7 +100,8 @@ class TorchModel(BaseModel):
             avg_loss = running_loss / len(dataloader_train)
 
             if X_val is not None and y_val is not None:
-                val_loss = self.score(X_val, y_val)
+                predictions = self.iterative_predict(X_val, steps = len(y_val))
+                val_loss = TorchModel.loss_func(predictions, y_val)
             else:
                 val_loss = avg_loss
             # end if
@@ -145,20 +146,48 @@ class TorchModel(BaseModel):
         # end if
     # end def
 
+
+    def iterative_predict(self, X_init: Tensor, steps: int) -> Tensor:
+        self.model.eval()
+        predictions = []
+        
+        X = X_init.clone()
+
+        for _ in range(steps):
+            with torch.no_grad():
+                output = self.model(X)
+
+                if output.dim() == 2:
+                    output = output.unsqueeze(1)
+                
+                predictions.append(output[:, -1:, :])  
+                
+                X = torch.cat((X[:, 1:, :], output[:, -1:, :]), dim=1)
+            # end with
+        # end for
+    
+        return torch.cat(predictions, dim=1)
+    # end def
+
     def score(self, X : Tensor, y : Tensor) -> float:
         self.model.eval()
+    
+        steps = y.size(1)
+        
         with torch.no_grad():
-            outputs: Tensor = self.model(X)
+            outputs: Tensor = self.iterative_predict(X, steps)
             mse: float = TorchModel.loss_func(outputs, y).item()
-        # end with
+        
         return mse
     # end def
 
-    def predict(self, X : Tensor) -> Tensor:
+    def predict(self, X: Tensor, steps: int) -> Tensor:
         self.model.eval()
+        
         with torch.no_grad():
-            outputs: Tensor = self.model(X)
-        # end with
-        return outputs
+            predictions: Tensor = self.iterative_predict(X, steps)
+            predictions = predictions[:, -1, :]
+            
+        return predictions
     # end def
 # end class

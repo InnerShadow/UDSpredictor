@@ -29,7 +29,7 @@ class ModelWrapper(object):
         return self.model.score(**kwargs)
     # end def
 
-    def predict(self, X : Optional[ndarray]) -> Optional[list]:
-        return self.model.predict(X)
+    def predict(self, X : Optional[ndarray], **kwargs) -> Optional[list]:
+        return self.model.predict(X, **kwargs)
     # end def
 # end class
