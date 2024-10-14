@@ -125,6 +125,8 @@ class RNNHyperModel(BaseHyperModel):
 
         print(self.get_params())
 
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
         self.model = ModelWrapper(
             type=self.type,
             num_layers=self.num_layers,
@@ -153,11 +155,11 @@ class RNNHyperModel(BaseHyperModel):
         batch_size = 32
         epochs = 500
 
-        X_train = torch.tensor(X[:train_scale], dtype=torch.float32).unsqueeze(-1)
-        y_train = torch.tensor(y[:train_scale], dtype=torch.float32).unsqueeze(-1)
+        X_train = torch.tensor(X[:train_scale], dtype=torch.float32).unsqueeze(-1).to(device = device)
+        y_train = torch.tensor(y[:train_scale], dtype=torch.float32).unsqueeze(-1).to(device = device)
 
-        self.X_test = torch.tensor(X[train_scale:], dtype=torch.float32).unsqueeze(-1)
-        self.y_test = torch.tensor(y[train_scale:], dtype=torch.float32).unsqueeze(-1)
+        self.X_test = torch.tensor(X[train_scale:], dtype=torch.float32).unsqueeze(-1).to(device = device)
+        self.y_test = torch.tensor(y[train_scale:], dtype=torch.float32).unsqueeze(-1).to(device = device)
 
         self.model.fit(
             X=X_train, 
