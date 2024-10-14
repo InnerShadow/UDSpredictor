@@ -1,4 +1,6 @@
 
+import json
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -47,3 +49,14 @@ plot_convergence(opt)
 plt.title('Convergence Plot')
 plt.savefig('Output/convergence_plot.png')
 plt.close(fig3)
+
+with open('Output/best_params.json', 'w') as f:
+    json.dump(opt.best_params_, f, indent = 6)
+# end with
+
+cv_results = {key: value.tolist() if isinstance(value, np.ndarray) else value 
+              for key, value in opt.cv_results_.items()}
+
+with open('Output/cv_results.json', 'w') as f:
+    json.dump(cv_results, f, indent = 6)
+# end with
