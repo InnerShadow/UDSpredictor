@@ -48,16 +48,6 @@ class RNNHyperModel(BaseHyperModel):
                 json.dump({'run_number': 1}, f)
             # end with
         # end if
-
-        with open(self.run_number_file, 'r') as f:
-            data = json.load(f)
-        # end with
-
-        if data['run_number'] != 1:
-            with open(self.run_number_file, 'w') as f:
-                json.dump({'run_number': 1}, f)
-            # end with
-        # end if
     # end def
 
     def get_current_run_number(self):
