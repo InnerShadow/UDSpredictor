@@ -173,6 +173,6 @@ class RNNHyperModel(BaseHyperModel):
         self.save_result(self.get_params(), score)
 
         self.increment_run_number()
-        return score
+        return -score
     # end def
 # end class
