@@ -27,7 +27,7 @@ class TorchModel(BaseModel):
                  output_size : int = 1,
                  use_batch_norm : bool = False,
                  dropout_rate : float = 0.0,
-                 log_path: str = 'Outputs/data.csv'
+                 log_path: str = 'Output/data.csv'
                  ) -> None:
         
         self.input_size = input_size
@@ -148,7 +148,7 @@ class TorchModel(BaseModel):
             # Early stopping
             if epochs_no_improve >= patience_early_stopping:
                 if verbose:
-                    print(f"Early stopping at epoch {epoch+1}. Best val_loss: {best_loss}")
+                    print(f'Early stopping at epoch {epoch+1}. Best val_loss: {best_loss}')
                 # end if
                 break
             # end if
@@ -156,11 +156,11 @@ class TorchModel(BaseModel):
             # Reduce learning rate
             if epochs_no_improve_lr >= patience_lr_reduce:
                 for param_group in optimizer.param_groups:
-                    param_group['lr'] = max(param_group['lr'] * lr_reduce_factor, minmun_lr)
+                    param_group['lr'] = max(param_group["lr"] * lr_reduce_factor, minmun_lr)
                 # end for
                 epochs_no_improve_lr = 0
                 if verbose:
-                    print(f"Reduced learning rate to {param_group['lr']}")
+                    print(f'Reduced learning rate to {param_group["lr"]}')
                 # end if
             # end if
         # end for
@@ -202,6 +202,7 @@ class TorchModel(BaseModel):
         with torch.no_grad():
             outputs: Tensor = self.iterative_predict(X, steps)
             mse: float = TorchModel.loss_func(outputs, y).item()
+        # end with
         
         return mse
     # end def
