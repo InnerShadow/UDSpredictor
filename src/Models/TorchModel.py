@@ -73,8 +73,8 @@ class TorchModel(BaseModel):
         }
 
         model_map = {
-            'lstm' : LSTMModel(**args).to('cpu'),
-            'gru' : GRUModel(**args).to('cpu'),
+            'lstm' : LSTMModel(**args).to('cuda'),
+            'gru' : GRUModel(**args).to('cuda'),
         }
 
         return model_map[self.rnn_type.lower()]
