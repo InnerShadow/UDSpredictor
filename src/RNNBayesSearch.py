@@ -14,7 +14,7 @@ params = {
     'type' : Categorical(['gru', 'lstm']),
     'hidden_size' : Integer(5, 100),
     'num_layers' : Integer(1, 10),
-    'seq_len' : Integer(5, 50),
+    'seq_len' : Integer(5, 100),
     'optimazer' : Categorical(['adam', 'rmsprop', 'nadam', 'adamw']),
     'use_batch_norm' : Categorical([True, False]),
     'dropout_rate' : Categorical([0, 0.1, 0.2, 0.3, 0.4, 0.5])
