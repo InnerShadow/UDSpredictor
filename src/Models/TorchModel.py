@@ -72,9 +72,11 @@ class TorchModel(BaseModel):
             'dropout_rate' : self.dropout_rate
         }
 
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
         model_map = {
-            'lstm' : LSTMModel(**args).to('cuda'),
-            'gru' : GRUModel(**args).to('cuda'),
+            'lstm' : LSTMModel(**args).to(device),
+            'gru' : GRUModel(**args).to(device),
         }
 
         return model_map[self.rnn_type.lower()]
