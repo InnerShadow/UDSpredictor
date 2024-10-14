@@ -24,7 +24,7 @@ opt = BayesSearchCV(
     RNNHyperModel(),
     params,
     cv = 3,
-    n_iter = 30,
+    n_iter = 50,
     random_state = 1212
 )
 
