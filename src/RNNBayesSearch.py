@@ -14,8 +14,8 @@ from HyperparametersTuning.RNNHyperModel import RNNHyperModel
 params = {
     'do_scale' : Categorical([True, False]),
     'type' : Categorical(['gru', 'lstm']),
-    'hidden_size' : Integer(5, 100),
-    'num_layers' : Integer(1, 10),
+    'hidden_size' : Integer(5, 250),
+    'num_layers' : Integer(1, 20),
     'seq_len' : Integer(5, 100),
     'optimazer' : Categorical(['adam', 'rmsprop', 'nadam', 'adamw']),
     'use_batch_norm' : Categorical([True, False]),
