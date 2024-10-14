@@ -11,14 +11,15 @@ from DataLoaders.DataLoaderWrapper import DataLoaderWrapper
 
 class RNNHyperModel(BaseHyperModel):
     def __init__(self, 
-                 do_scale: bool,
-                 type: str,
-                 hidden_size: int,
-                 num_layers: int,
-                 seq_len: int,
-                 optimazer: str,
-                 use_batch_norm: bool,
-                 dropout_rate: float):
+                 do_scale: bool = True,
+                 type: str = 'gru',
+                 hidden_size: int = 10,
+                 num_layers: int = 2,
+                 seq_len: int = 20,
+                 optimazer: str = 'adam',
+                 use_batch_norm: bool = True,
+                 dropout_rate: float = 0
+                 ):
         
         self.do_scale = do_scale
         self.type = type
@@ -46,7 +47,17 @@ class RNNHyperModel(BaseHyperModel):
             with open(self.run_number_file, 'w') as f:
                 json.dump({'run_number': 1}, f)
             # end with
-        # enif
+        # end if
+
+        with open(self.run_number_file, 'r') as f:
+            data = json.load(f)
+        # end with
+
+        if data['run_number'] != 1:
+            with open(self.run_number_file, 'w') as f:
+                json.dump({'run_number': 1}, f)
+            # end with
+        # end if
     # end def
 
     def get_current_run_number(self):
@@ -83,7 +94,7 @@ class RNNHyperModel(BaseHyperModel):
         # end with
     # end def
 
-    def get_params(self, deep=True) -> dict:
+    def get_params(self, deep = True) -> dict:
         return {
             'do_scale': self.do_scale,
             'type': self.type,
@@ -111,6 +122,8 @@ class RNNHyperModel(BaseHyperModel):
             print(existing_score)
             return
         # end if
+
+        print(self.get_params())
 
         self.model = ModelWrapper(
             type=self.type,
