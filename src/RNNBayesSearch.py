@@ -33,19 +33,19 @@ opt = BayesSearchCV(
 opt.fit(np.zeros(shape = 10), np.zeros(shape = 10))
 
 fig1 = plt.figure()
-plot_evaluations(opt)
+plot_objective(opt.optimizer_results_[0])
 plt.title('Parameter Evaluations')
 plt.savefig('Output/parameter_evaluations.png')
 plt.close(fig1)  
 
 fig2 = plt.figure()
-plot_objective(opt)
+plot_objective(opt.optimizer_results_[0])
 plt.title('Objective Function')
 plt.savefig('Output/objective_function.png')
 plt.close(fig2)
 
 fig3 = plt.figure()
-plot_convergence(opt)
+plot_convergence(opt.optimizer_results_[0])
 plt.title('Convergence Plot')
 plt.savefig('Output/convergence_plot.png')
 plt.close(fig3)
