@@ -12,14 +12,11 @@ from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 
 import os
 
-# import scipy.stats as stats
-
-# from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 
 class AutocorrelationDrawer(DrawingSystem):
 
     def __init__(self) -> None:
-        super.__init__()
+        super().__init__()
         self.lags: int = 40
     #end def
 
@@ -33,6 +30,14 @@ class AutocorrelationDrawer(DrawingSystem):
 
     def save(self, path: str) -> None:
         if self.list_of_data:
+            fig, axs = plt.subplots(2, 1, figsize = (10, 12))
+
+            plot_acf(self.list_of_data[-1], lags = self.lags, ax = axs[0])
+            axs[0].set_title('Autocorrelation Function')
+
+            plot_pacf(self.list_of_data[-1], lags = self.lags, ax = axs[1])
+            axs[1].set_title('Partial Autocorrelation Function')
+            
             filepath = os.path.join(BASE_OUTPUT_PATH, path)
             plt.savefig(filepath)
         else:
