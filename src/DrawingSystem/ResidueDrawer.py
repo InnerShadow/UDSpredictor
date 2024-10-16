@@ -14,7 +14,7 @@ import scipy.stats as stats
 class ResidueDrawer(DrawingSystem):
     def __init__(self) -> None:
         super().__init__()
-        self.residuals : ndarray = ndarray()
+        self.residuals : ndarray = [] #ndarray()
     # end def
 
     def add_residue(self, 
@@ -27,6 +27,25 @@ class ResidueDrawer(DrawingSystem):
 
     def save(self, path: str) -> None:
         if self.residuals:
+            fig, axs = plt.subplots(3, 1, figsize = (10, 12))
+
+            for x_true, residue, cmap in self.residuals:
+                #axs[0] = plot(x_true, residue, marker = ... line cmap )
+                scatter = axs[0].scatter(x_true, residue, color = 'blue' , cmap = cmap)
+                axs[0].axhline(y = 0, color = 'red', linestyle = '--')
+                axs[0].set_title('Residuals')
+                axs[0].set_xlabel('True Values')
+                axs[0].set_ylabel('Residuals')
+
+                stats.probplot(residue, dist = 'norm', plot = axs[1])
+                axs[1].set_title('Q-Q Plot of the Residuals')
+            
+                #bins???
+                axs[2].hist(residue, bins = 30, color = 'blue', alpha = 0.7, edgecolor = 'black')
+                axs[2].set_title('Histogram of the Residuals')
+                axs[2].set_xlabel('Residuals')
+                axs[2].set_ylabel('Frequency')
+
             filepath = os.path.join(BASE_OUTPUT_PATH, path)
             plt.savefig(filepath)
         else:
@@ -38,7 +57,6 @@ class ResidueDrawer(DrawingSystem):
         fig, axs = plt.subplots(3, 1, figsize = (10, 12))
 
         for x_true, residue, cmap in self.residuals:
-            #axs[0] = plot(x_true, residue, marker = ... line cmap )
             scatter = axs[0].scatter(x_true, residue, color = 'blue' , cmap = cmap)
             axs[0].axhline(y = 0, color = 'red', linestyle = '--')
             axs[0].set_title('Residuals')
@@ -48,13 +66,11 @@ class ResidueDrawer(DrawingSystem):
             stats.probplot(residue, dist = 'norm', plot = axs[1])
             axs[1].set_title('Q-Q Plot of the Residuals')
             
-            #bins???
-            axs[2].hist(residue, bins = 30, color = 'blue', alpha = 0.7)
+            axs[2].hist(residue, bins = 30, color = 'blue', alpha = 0.7, edgecolor = 'black')
             axs[2].set_title('Histogram of the Residuals')
             axs[2].set_xlabel('Residuals')
             axs[2].set_ylabel('Frequency')
 
-        # без наложения
         plt.tight_layout()
         plt.show()
     # end def
