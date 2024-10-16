@@ -13,7 +13,7 @@ class MultiChartDrawer(DrawingSystem):
 
     def __init__(self) -> None:
         super().__init__()
-        self.charts : ndarray = ndarray()
+        self.charts : ndarray = [] # ndarray()
     # end def
 
     def add_new_chart(self, 
@@ -27,7 +27,7 @@ class MultiChartDrawer(DrawingSystem):
     # end def
 
     def get_new_color(self) -> str:
-        colors = ['blue', 'green', 'red', 'orange', 'purple']
+        colors = ['blue', 'green', 'orange', 'red']
         index = len(self.list_of_colors) % len(colors)
         color = colors[index]
         self.list_of_colors.append(color)
@@ -36,6 +36,10 @@ class MultiChartDrawer(DrawingSystem):
 
     def save(self, path: str) -> None:
         if self.charts:
+            plt.figure()
+            for x, y, label, color in self.charts:
+                plt.plot(x, y, label = label, color = color)
+
             filepath = os.path.join(BASE_OUTPUT_PATH, path)
             plt.savefig(filepath)
         else:
