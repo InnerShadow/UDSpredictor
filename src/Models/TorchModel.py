@@ -153,4 +153,4 @@ class TorchModel(BaseModel):
         self.model.eval()
         with torch.no_grad():
             predictions: Tensor = self.model(X)
-        return predictions[:, -1, :]
+        return predictions[:, -1]

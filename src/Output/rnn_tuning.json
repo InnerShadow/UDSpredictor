@@ -2728,5 +2728,19 @@
             },
             "run_number": 3,
             "score": -0.13600604236125946
+      },
+      {
+            "params": {
+                  "do_scale": true,
+                  "type": "gru",
+                  "num_layers": 1,
+                  "hidden_size": 12,
+                  "seq_len": 10,
+                  "optimazer": "adam",
+                  "use_batch_norm": true,
+                  "dropout_rate": 0.5
+            },
+            "run_number": 1,
+            "score": -0.020533373579382896
       }
 ]
