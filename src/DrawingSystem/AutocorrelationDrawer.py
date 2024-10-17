@@ -33,10 +33,10 @@ class AutocorrelationDrawer(DrawingSystem):
             fig, axs = plt.subplots(2, 1, figsize = (10, 12))
 
             plot_acf(self.list_of_data[-1], lags = self.lags, ax = axs[0])
-            axs[0].set_title('Autocorrelation Function')
+            axs[0].set_title('Автокорреляционная функция')
 
             plot_pacf(self.list_of_data[-1], lags = self.lags, ax = axs[1])
-            axs[1].set_title('Partial Autocorrelation Function')
+            axs[1].set_title('Частичная автокорреляционная функция')
             
             filepath = os.path.join(BASE_OUTPUT_PATH, path)
             plt.savefig(filepath)
@@ -48,10 +48,10 @@ class AutocorrelationDrawer(DrawingSystem):
         fig, axs = plt.subplots(2, 1, figsize = (10, 12))
             
         plot_acf(self.list_of_data[-1], lags = self.lags, ax = axs[0])
-        axs[0].set_title('Autocorrelation Function')
+        axs[0].set_title('Автокорреляционная функция')
 
         plot_pacf(self.list_of_data[-1], lags = self.lags, ax = axs[1])
-        axs[1].set_title('Partial Autocorrelation Function')
+        axs[1].set_title('Частичная автокорреляционная функция')
         
         plt.tight_layout()
         plt.show()
