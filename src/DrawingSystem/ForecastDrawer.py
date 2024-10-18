@@ -78,9 +78,9 @@ class ForecastDrawer(DrawingSystem):
             plt.plot(x_true, y_true, label = true_label, color = true_color)
             plt.plot(x, y, label = label, color = color)
 
-        plt.title('Forecast and Known Data')
-        plt.xlabel('Time')
-        plt.ylabel('Value')
+        plt.title('Известные и прогнозируемые данные')
+        plt.xlabel('Дата')
+        plt.ylabel('Стоимость')
         plt.legend()
         plt.show()
     # end def
