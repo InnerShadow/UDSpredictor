@@ -68,7 +68,23 @@ class ForecastDrawer(DrawingSystem):
             raise ValueError('No data to save')
     # end def
 
-    def plot(self) -> None:
+    def plot_before(self) -> None:
+        plt.figure()
+
+        for x, y, label, color in self.known_data:
+            plt.plot(x, y, label = label, color = color)
+
+        for x_true, y_true, true_label, x, y, label, true_color, color in self.forecast_data:
+            plt.plot(x_true, y_true, label = true_label, color = true_color)
+            plt.plot(x, y, label = label, color = color)
+
+        plt.title('Известные и прогнозируемые данные до COVID')
+        plt.xlabel('')
+        plt.ylabel('Стоимость')
+        plt.legend()
+        plt.show()
+
+    def plot_after(self) -> None:
         plt.figure()
 
         for x, y, label, color in self.known_data:
@@ -79,10 +95,11 @@ class ForecastDrawer(DrawingSystem):
             plt.plot(x, y, label = label, color = color)
 
         plt.title('Известные и прогнозируемые данные после COVID')
-        plt.xlabel('Дата')
+        plt.xlabel('')
         plt.ylabel('Стоимость')
         plt.legend()
         plt.show()
+    
     # end def
 # end class
 
